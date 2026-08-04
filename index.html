@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>HiRouter — VPN-роутер под ключ</title>
+</head>
+<body>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#0a0d14; --ink2:#0c1017; --panel:#131926; --panelc:#141a27; --line:#232c3f;
+    --text:#eaeef7; --muted:#8b95ab; --dim:#5f6a80;
+    --cyan:#25d3ee; --cyan-d:#0b7c93; --gold:#f5b13d; --green:#34d399; --violet:#8b7cff;
+    --acc-text:#38dcf4; --acc-grad-b:#7de8f7;
+    --navbg:rgba(10,13,20,.72); --gridline:rgba(255,255,255,.03); --codebg:#0a0e16;
+    --maxw:1080px; color-scheme:dark;
+  }
+  @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+    --ink:#eef2f8; --ink2:#e6ebf3; --panel:#ffffff; --panelc:#ffffff; --line:#dde3ee;
+    --text:#0f1727; --muted:#576074; --dim:#9aa3b5;
+    --cyan:#0fb3d4; --cyan-d:#0c93ae; --gold:#b7791a; --green:#0e9a56;
+    --acc-text:#0a8aab; --acc-grad-b:#0fb3d4;
+    --navbg:rgba(238,242,248,.82); --gridline:rgba(15,24,39,.045); --codebg:#eef2f8; color-scheme:light;
+  }}
+  :root[data-theme="light"]{
+    --ink:#eef2f8; --ink2:#e6ebf3; --panel:#ffffff; --panelc:#ffffff; --line:#dde3ee;
+    --text:#0f1727; --muted:#576074; --dim:#9aa3b5;
+    --cyan:#0fb3d4; --cyan-d:#0c93ae; --gold:#b7791a; --green:#0e9a56;
+    --acc-text:#0a8aab; --acc-grad-b:#0fb3d4;
+    --navbg:rgba(238,242,248,.82); --gridline:rgba(15,24,39,.045); --codebg:#eef2f8; color-scheme:light;
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--ink);color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;background:var(--navbg);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+  .logo .mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--cyan),var(--cyan-d));
+    display:grid;place-items:center;color:#03121a;font-weight:900;font-size:15px}
+  .navlinks{display:flex;gap:18px;font-size:14px;color:var(--muted)}
+  .navlinks a:hover{color:var(--text)}
+  @media(max-width:860px){.navlinks{display:none}}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;
+    padding:10px 18px;border-radius:11px;transition:.18s;border:1px solid transparent;cursor:pointer;
+    white-space:nowrap;-webkit-tap-highlight-color:transparent;text-decoration:none}
+  .btn-primary,.btn-primary:link,.btn-primary:visited{background:linear-gradient(135deg,var(--cyan),#12b5d6);
+    color:#03121a;box-shadow:0 6px 20px -6px rgba(37,211,238,.5)}
+  .btn-primary:hover,.btn-primary:focus{transform:translateY(-1px);box-shadow:0 10px 28px -8px rgba(37,211,238,.6);color:#03121a}
+  .btn-primary:active{transform:translateY(0)}
+  .btn-ghost,.btn-ghost:link,.btn-ghost:visited{border-color:var(--line);color:var(--text)}
+  .btn-ghost:hover,.btn-ghost:focus{border-color:var(--acc-text);color:var(--acc-text)}
+
+  .tt{background:transparent;border:1px solid var(--line);color:var(--text);width:38px;height:38px;
+    border-radius:10px;font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.18s;line-height:1;-webkit-tap-highlight-color:transparent}
+  .tt:hover{border-color:var(--acc-text)}
+
+  /* hero */
+  .hero{position:relative;padding:92px 0 72px;text-align:center;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-40% 0 auto 0;height:620px;
+    background:radial-gradient(60% 50% at 50% 0%,rgba(37,211,238,.16),transparent 70%);pointer-events:none}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(var(--gridline) 1px,transparent 1px),linear-gradient(90deg,var(--gridline) 1px,transparent 1px);
+    background-size:44px 44px;mask-image:radial-gradient(70% 55% at 50% 15%,#000,transparent 75%)}
+  .hero>*{position:relative}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--acc-text);border:1px solid rgba(37,211,238,.25);background:rgba(37,211,238,.07);
+    padding:6px 14px;border-radius:100px;margin-bottom:26px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  h1{font-size:clamp(38px,7vw,66px);line-height:1.02;letter-spacing:-.03em;font-weight:850;text-wrap:balance}
+  h1 .accent{background:linear-gradient(120deg,var(--acc-text),var(--acc-grad-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{max-width:640px;margin:22px auto 0;font-size:clamp(16px,2.3vw,19px);color:var(--muted);text-wrap:pretty}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+  .cta .btn{padding:13px 24px;font-size:15px}
+  .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:52px}
+  .stat{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:16px 22px;min-width:150px}
+  .stat b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em}
+  .stat span{font-size:12.5px;color:var(--muted)}
+
+  /* sections */
+  section{padding:74px 0;border-top:1px solid var(--line)}
+  .shead{text-align:center;max-width:640px;margin:0 auto 46px}
+  .shead .kick{font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc-text);margin-bottom:12px}
+  .shead h2{font-size:clamp(28px,4.5vw,40px);letter-spacing:-.025em;font-weight:820;text-wrap:balance}
+  .shead p{color:var(--muted);margin-top:14px;font-size:16px}
+
+  /* what-is / flow */
+  .flow{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;max-width:880px;margin:0 auto}
+  @media(max-width:720px){.flow{grid-template-columns:1fr}.flow .arrow{transform:rotate(90deg);justify-self:center}}
+  .flowcard{background:var(--panelc);border:1px solid var(--line);border-radius:18px;padding:26px;text-align:center}
+  .flowcard .ic{font-size:34px}
+  .flowcard h3{margin:12px 0 6px;font-size:19px;letter-spacing:-.01em}
+  .flowcard p{color:var(--muted);font-size:14px}
+  .arrow{font-size:26px;color:var(--acc-text)}
+
+  /* advantages grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panelc);border:1px solid var(--line);border-radius:16px;padding:24px;transition:.2s;
+    display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center}
+  .card:hover{border-color:rgba(37,211,238,.4);transform:translateY(-2px)}
+  .card .ic{width:46px;height:46px;border-radius:12px;background:rgba(37,211,238,.1);border:1px solid rgba(37,211,238,.22);
+    display:grid;place-items:center;font-size:22px}
+  .card h3{font-size:17px;letter-spacing:-.01em;margin:0}
+  .card p{color:var(--muted);font-size:14px;grid-column:1 / -1;margin-top:14px}
+  .card h3 .tag{font-size:11px;font-weight:600;color:var(--acc-text);background:rgba(37,211,238,.1);
+    border:1px solid rgba(37,211,238,.25);padding:2px 8px;border-radius:100px;margin-left:7px;
+    vertical-align:middle;font-family:ui-monospace,monospace;letter-spacing:0}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  @media(max-width:900px){.grid4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.grid4{grid-template-columns:1fr}}
+
+  /* install steps */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+  @media(max-width:860px){.steps{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:480px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--panelc);border:1px solid var(--line);border-radius:16px;padding:24px;position:relative}
+  .step .n{counter-increment:s;font-family:ui-monospace,monospace;font-size:13px;font-weight:700;color:var(--acc-text);
+    width:34px;height:34px;border-radius:10px;border:1px solid rgba(37,211,238,.3);background:rgba(37,211,238,.08);
+    display:grid;place-items:center;margin-bottom:16px}
+  .step .n::before{content:"0" counter(s)}
+  .step h3{font-size:16px;margin-bottom:6px;letter-spacing:-.01em}
+  .step p{color:var(--muted);font-size:13.5px}
+  .step code{background:var(--codebg);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;color:var(--acc-text)}
+
+  /* tariffs */
+  .twrap{overflow-x:auto;border:1px solid var(--line);border-radius:18px;background:var(--panelc)}
+  table{width:100%;min-width:640px;border-collapse:collapse;font-size:14px}
+  thead th{text-align:left;padding:16px 18px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap;font-weight:600}
+  thead th.price{text-align:right}
+  tbody td{padding:16px 18px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:rgba(255,255,255,.015)}
+  .tname{font-weight:800;font-size:15px;letter-spacing:-.01em}
+  .tname.base{color:var(--green)} .tname.prem{color:var(--acc-text)} .tname.lux{color:var(--gold)}
+  .tdesc{color:var(--muted);font-size:12.5px;white-space:normal;max-width:280px}
+  td.price{text-align:right;font-family:ui-monospace,monospace;font-weight:700;font-size:15px}
+  td.price small{color:var(--dim);font-weight:400}
+  .badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:8px;vertical-align:middle}
+  .badge.hit{background:rgba(37,211,238,.14);color:var(--acc-text);border:1px solid rgba(37,211,238,.3)}
+  .badge.top{background:rgba(245,177,61,.14);color:var(--gold);border:1px solid rgba(245,177,61,.3)}
+  .tnote{color:var(--dim);font-size:12.5px;text-align:center;margin-top:16px}
+
+  /* faq */
+  .faq{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+  details{background:var(--panelc);border:1px solid var(--line);border-radius:13px;padding:2px 20px}
+  summary{cursor:pointer;list-style:none;padding:16px 0;font-weight:650;font-size:15.5px;display:flex;justify-content:space-between;align-items:center;gap:14px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--acc-text);font-size:22px;font-weight:400;transition:.2s}
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{color:var(--muted);font-size:14px;padding:0 0 18px}
+
+  /* cta band + footer */
+  .band{margin:0 auto;max-width:var(--maxw);border:1px solid rgba(37,211,238,.25);border-radius:24px;padding:52px 30px;text-align:center;
+    background:radial-gradient(120% 130% at 50% 0%,rgba(37,211,238,.12),transparent 60%),var(--panelc)}
+  .band h2{font-size:clamp(26px,4vw,38px);letter-spacing:-.025em;font-weight:820}
+  .band p{color:var(--muted);margin:14px auto 0;max-width:520px}
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--dim);font-size:13px;text-align:center;margin-top:74px}
+  footer a{color:var(--muted)} footer a:hover{color:var(--acc-text)}
+</style>
+
+<nav><div class="wrap">
+  <div class="logo"><span class="mark">H</span> HiRouter</div>
+  <div class="navlinks">
+    <a href="#what">Что это</a><a href="#adv">Преимущества</a><a href="#tech">Протоколы</a><a href="#system">Система</a><a href="#install">Установка</a><a href="#use">Пользуйся</a><a href="#tariffs">Тарифы</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px"><button class="tt" id="themeToggle" aria-label="Сменить тему">🌙</button><a class="btn btn-primary" href="https://t.me/hirouter_bot">Подключить</a></div>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <span class="eyebrow"><span class="dot"></span> Работает в России</span>
+  <h1>VPN для всего дома.<br><span class="accent">Воткнул роутер — работает.</span></h1>
+  <p class="lead">Подключаешь роутер — и весь дом уже под умным VPN, который работает как надо и когда надо. Все устройства под защитой сразу: телефоны, ТВ, приставки, компьютеры. Без настройки каждого, без подписок в каждом приложении — приходит готовым и обновляется сам.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://t.me/hirouter_bot">Купить / Подключить →</a>
+    <a class="btn btn-ghost" href="#tariffs">Смотреть тарифы</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>до 50 Гбит/с</b><span>каналы приватных серверов</span></div>
+    <div class="stat"><b>1 роутер</b><span>= VPN на всех устройствах</span></div>
+    <div class="stat"><b>4 протокола</b><span>Reality · Hysteria2 · gRPC · xHTTP</span></div>
+  </div>
+</div></header>
+
+<section id="what"><div class="wrap">
+  <div class="shead">
+    <div class="kick">Что это</div>
+    <h2>Один роутер вместо VPN в каждом устройстве</h2>
+    <p>Обычный VPN нужно ставить и включать на каждом телефоне, ТВ и компьютере. HiRouter делает это на уровне сети — подключаешь роутер, и весь дом уже под умным VPN. И это не просто прошивка с конфигом: за роутером стоит целая система — серверы, ротация, обновления и отказоустойчивость на нашей стороне.</p>
+  </div>
+  <div class="flow">
+    <div class="flowcard"><div class="ic">📱💻📺</div><h3>Ваши устройства</h3><p>Подключаются к Wi-Fi как обычно — ничего настраивать не надо</p></div>
+    <div class="arrow">→</div>
+    <div class="flowcard"><div class="ic">🌐</div><h3>HiRouter</h3><p>Пропускает трафик всего дома через защищённый канал — быстро и приватно</p></div>
+  </div>
+</div></section>
+
+<section id="adv"><div class="wrap">
+  <div class="shead">
+    <div class="kick">Преимущества</div>
+    <h2>Почему HiRouter удобнее</h2>
+  </div>
+  <div class="grid">
+    <div class="card"><div class="ic">🏠</div><h3>Весь дом сразу</h3><p>Один роутер защищает все устройства — телефоны, ТВ, приставки, ноутбуки. Не надо настраивать каждое.</p></div>
+    <div class="card"><div class="ic">🔌</div><h3>Воткнул и работает</h3><p>Приходит уже настроенным. Обновляется сам, без вашего участия. Нужно только включить.</p></div>
+    <div class="card"><div class="ic">🛡️</div><h3>Стабильное соединение</h3><p>Современные протоколы — Reality, Hysteria2, gRPC, xHTTP — дают стабильную и приватную связь даже в перегруженных и капризных сетях.</p></div>
+    <div class="card"><div class="ic">🧭</div><h3>Умная маршрутизация</h3><p>Локальные сервисы и обычный трафик идут напрямую — дом остаётся быстрым, а защищённый канал не перегружается.</p></div>
+    <div class="card"><div class="ic">🌍</div><h3>Публичные + приватные</h3><p>База — большой пул публичных серверов. Премиум — личные скоростные линии до 10 Гбит/с.</p></div>
+    <div class="card"><div class="ic">♻️</div><h3>Отказоустойчивость</h3><p>Несколько адресов панели, резервные каналы, авто-восстановление. Если один адрес станет недоступен — соединение не прерывается.</p></div>
+  </div>
+</div></section>
+
+<section id="tech"><div class="wrap">
+  <div class="shead">
+    <div class="kick">Технологии</div>
+    <h2>Четыре современных протокола</h2>
+    <p>HiRouter держит сразу несколько транспортов с современным шифрованием. Если один недоступен — автоматически работает другой. Стабильная и приватная связь на любом канале.</p>
+  </div>
+  <div class="grid4">
+    <div class="card"><div class="ic">🔒</div><h3>Reality<span class="tag">TCP + Vision</span></h3><p>Стандартное TLS-шифрование, как у обычных защищённых сайтов. Flow xtls-rprx-vision — для максимальной скорости.</p></div>
+    <div class="card"><div class="ic">⚡</div><h3>Hysteria2<span class="tag">QUIC</span></h3><p>Работает поверх QUIC с алгоритмом BBR — быстро даже на нестабильном интернете, устойчив к потерям пакетов.</p></div>
+    <div class="card"><div class="ic">🧬</div><h3>gRPC</h3><p>Трафик как обычные gRPC-вызовы. Совместим с CDN и корпоративными прокси.</p></div>
+    <div class="card"><div class="ic">🌊</div><h3>xHTTP</h3><p>Новейший транспорт поверх обычного HTTP-потока. Гибкий и стабильный на самых разных каналах.</p></div>
+  </div>
+</div></section>
+
+<section id="system"><div class="wrap">
+  <div class="shead">
+    <div class="kick">Система</div>
+    <h2>Не просто роутер — управляемая система</h2>
+    <p>HiRouter — это не прошивка с одним конфигом. За роутером стоит инфраструктура: пул серверов, ротация, обновления и отказоустойчивость — всё на нашей стороне. Тебе не нужно ничего поддерживать вручную.</p>
+  </div>
+  <div class="grid">
+    <div class="card"><div class="ic">🔄</div><h3>Ротация серверов</h3><p>Большой пул серверов. Система балансирует нагрузку и переключает узлы автоматически — соединение продолжается без разрывов.</p></div>
+    <div class="card"><div class="ic">⬆️</div><h3>Авто-обновление</h3><p>Роутер сам обновляет и своё ПО, и список серверов. Новые узлы и настройки приходят без переустановки и походов в терминал.</p></div>
+    <div class="card"><div class="ic">🎛️</div><h3>Единая панель</h3><p>Все роутеры и подписки под централизованным управлением: статус, трафик, тарифы. Настройка и поддержка — из одного места.</p></div>
+    <div class="card"><div class="ic">🛰️</div><h3>Резервные адреса</h3><p>Несколько независимых точек входа в систему. Если основная недоступна, роутер сам находит рабочую и остаётся на связи.</p></div>
+    <div class="card"><div class="ic">📊</div><h3>Учёт трафика</h3><p>Помесячный лимит с автосбросом и честная статистика. Когда трафик заканчивается — роутер сам об этом сообщит.</p></div>
+    <div class="card"><div class="ic">🔔</div><h3>Портал и поддержка</h3><p>При окончании тарифа роутер показывает страницу с продлением и чатом поддержки. Публичные серверы при этом остаются доступны.</p></div>
+  </div>
+</div></section>
+
+<section id="install"><div class="wrap">
+  <div class="shead">
+    <div class="kick">Установка</div>
+    <h2>4 шага — и готово</h2>
+    <p>Проще, чем настроить обычный роутер.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="n"></div><h3>Получи роутер</h3><p>Купи готовый HiRouter или прошей свой поддерживаемый (Cudy, Xiaomi, Huasifei) одной командой.</p></div>
+    <div class="step"><div class="n"></div><h3>Подключи</h3><p>Воткни кабель интернета, включи питание. Роутер сам зарегистрируется.</p></div>
+    <div class="step"><div class="n"></div><h3>Активируй</h3><p>Открой <code>192.168.10.1</code> → вкладка HiRouter, пришли серийник в <code>@hirouter_bot</code>. В купленных роутерах уже активировано.</p></div>
+    <div class="step"><div class="n"></div><h3>Готово</h3><p>Весь дом под умным VPN. Всё работает. Без костылей и танцев с бубнами.</p></div>
+  </div>
+</div></section>
+
+<section id="use"><div class="wrap">
+  <div class="shead">
+    <div class="kick">Пользуйся</div>
+    <h2>Весь дом под умным VPN</h2>
+    <p>Управляй — если нужно — прямо из панели роутера: добавляй свои конфиги, включай публичные серверы одной кнопкой. Или просто ничего не делай — бери любой тариф и наслаждайся.</p>
+  </div>
+</div></section>
+
+<section id="tariffs"><div class="wrap">
+  <div class="shead">
+    <div class="kick">Тарифы</div>
+    <h2>От простого старта до личного сервера</h2>
+    <p>Базовый уже в роутере. Захотел скорости — включаешь премиум. Нужен свой сервер на семью или команду — берёшь LUX.</p>
+  </div>
+  <div class="twrap"><table>
+    <thead><tr>
+      <th>Тариф</th><th>Что даёт</th><th class="price">3 мес</th><th class="price">6 мес</th><th class="price">12 мес</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="tname base">Базовый</span></td>
+        <td class="tdesc">Большой пул публичных VPN + свои конфиги. Идёт с роутером.</td>
+        <td class="price"><small>—</small></td><td class="price">1 500 ₽</td><td class="price">2 500 ₽</td>
+      </tr>
+      <tr>
+        <td><span class="tname prem">Premium-3</span><span class="badge hit">Хит</span></td>
+        <td class="tdesc">3 приватных сервера, 10 Гбит/с (до 5 Гбит/с на абонента).</td>
+        <td class="price">3 000 ₽</td><td class="price">5 700 ₽</td><td class="price">10 800 ₽</td>
+      </tr>
+      <tr>
+        <td><span class="tname prem">Premium-5</span></td>
+        <td class="tdesc">5 приватных серверов, 10 Гбит/с. Больше запаса и географии.</td>
+        <td class="price">5 000 ₽</td><td class="price">9 500 ₽</td><td class="price">18 000 ₽</td>
+      </tr>
+      <tr>
+        <td><span class="tname lux">LUX-1</span></td>
+        <td class="tdesc">Индивидуальный сервер, до 5 абонентов. Своя выделенная линия.</td>
+        <td class="price">7 500 ₽</td><td class="price">14 300 ₽</td><td class="price">27 000 ₽</td>
+      </tr>
+      <tr>
+        <td><span class="tname lux">LUX-2</span></td>
+        <td class="tdesc">Индивидуальный сервер, до 10 абонентов. ≈ 400 ₽/мес с человека.</td>
+        <td class="price">12 000 ₽</td><td class="price">22 800 ₽</td><td class="price">43 200 ₽</td>
+      </tr>
+      <tr>
+        <td><span class="tname lux">LUX-3</span><span class="badge top">Максимум</span></td>
+        <td class="tdesc">Мощнейший сервер, до 30 абонентов. ≈ 278 ₽/мес с человека.</td>
+        <td class="price">25 000 ₽</td><td class="price">47 500 ₽</td><td class="price">90 000 ₽</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <p class="tnote">6 месяцев — −5%, год — −10%. LUX выгоден в складчину: чем больше абонентов на выделенном сервере — тем дешевле на человека. Цены ориентировочные.</p>
+  <div class="cta" style="margin-top:34px">
+    <a class="btn btn-primary" href="https://t.me/hirouter_bot">Выбрать тариф в боте →</a>
+  </div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <div class="shead"><div class="kick">Вопросы</div><h2>Коротко о главном</h2></div>
+  <div class="faq">
+    <details><summary>Нужно ли что-то настраивать на телефоне или ТВ?</summary><p>Нет. Устройства подключаются к Wi-Fi роутера как обычно. Весь VPN работает на уровне роутера — на самих устройствах ничего ставить не нужно.</p></details>
+    <details><summary>Чем базовый отличается от премиума?</summary><p>Базовый даёт большой пул публичных серверов и возможность добавлять свои конфиги — бесплатно с роутером. Премиум — это личные скоростные серверы (до 10 Гбит/с), стабильнее и быстрее, особенно вечером.</p></details>
+    <details><summary>Что такое LUX?</summary><p>Отдельный выделенный сервер под вас (и вашу семью/команду до 5, 10 или 30 человек). Никто чужой на нём не сидит — максимум скорости и приватности. В пересчёте на человека выходит дешевле премиума.</p></details>
+    <details><summary>Что будет, когда закончится премиум?</summary><p>Роутер продолжит работать на базовом тарифе — публичные серверы и ваши конфиги остаются. Продлить премиум можно в любой момент через бота.</p></details>
+    <details><summary>А если один сервер станет недоступен?</summary><p>HiRouter держит несколько протоколов и адресов, резервные каналы и авто-обновление. Если один адрес недоступен — система сама переключается, соединение не прерывается.</p></details>
+  </div>
+</div></section>
+
+<section style="border:none;padding-top:20px">
+  <div class="band">
+    <h2>Подключите весь дом за пару минут</h2>
+    <p>Напишите в бота — поможем выбрать тариф, пришлём роутер или команду для прошивки.</p>
+    <div class="cta" style="margin-top:26px"><a class="btn btn-primary" href="https://t.me/hirouter_bot">Открыть @hirouter_bot →</a></div>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  HiRouter · VPN для всего дома · <a href="https://t.me/hirouter_bot">@hirouter_bot</a><br>
+  <span style="opacity:.6">Reality · Hysteria2 · gRPC · xHTTP · умная маршрутизация · авто-обновление</span>
+</div></footer>
+
+<script>
+(function(){var r=document.documentElement,K="hr-theme",v=null;
+try{v=localStorage.getItem(K)}catch(e){}
+if(v==="light"||v==="dark")r.setAttribute("data-theme",v);
+function cur(){var d=r.getAttribute("data-theme");if(d)return d;
+try{return matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}catch(e){return"dark"}}
+function paint(){var b=document.getElementById("themeToggle");if(b)b.textContent=cur()==="light"?"\u2600\ufe0f":"\ud83c\udf19"}
+var b=document.getElementById("themeToggle");
+if(b)b.addEventListener("click",function(){var n=cur()==="light"?"dark":"light";r.setAttribute("data-theme",n);try{localStorage.setItem(K,n)}catch(e){}paint()});
+paint();})();
+</script>
+
+</body>
+</html>
