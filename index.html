@@ -151,6 +151,52 @@
   .badge.top{background:rgba(245,177,61,.14);color:var(--gold);border:1px solid rgba(245,177,61,.3)}
   .tnote{color:var(--dim);font-size:12.5px;text-align:center;margin-top:16px}
 
+  /* карточки тарифов — содержимое строк задаёт панель (Тарифы → «Опубликовать на сайте») */
+  .tp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));gap:16px;align-items:stretch}
+  .tp-card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:18px;
+    background:linear-gradient(180deg,var(--panelc),var(--ink2));padding:20px 20px 18px}
+  .tp-cyan{border-color:rgba(37,211,238,.28)}
+  .tp-gold{border-color:rgba(245,177,61,.30)}
+  .tp-name{font-size:19px;font-weight:800;letter-spacing:-.01em}
+  .tp-cyan .tp-name{color:var(--acc-text)} .tp-gold .tp-name{color:var(--gold)}
+  .tp-desc{color:var(--muted);font-size:13.5px;margin-top:7px;line-height:1.5}
+  .tp-specs{list-style:none;margin:14px 0 0;padding:0}
+  .tp-specs li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    padding:8px 0;border-top:1px dashed var(--line);font-size:13.5px}
+  .tp-specs li:first-child{border-top:none}
+  .tp-specs .k{color:var(--muted);flex:0 0 auto}
+  .tp-specs .v{color:var(--text);font-weight:700;text-align:right}
+  .tp-term{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;
+    margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .tp-term button{appearance:none;cursor:pointer;font:inherit;min-height:46px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    padding:6px 3px;border-radius:11px;line-height:1.08;border:1px solid var(--line);
+    background:var(--ink2);font-size:13px;font-weight:700;color:var(--muted);
+    transition:background .15s,border-color .15s,color .15s}
+  .tp-term button .d{font-size:10px;font-weight:800;color:var(--dim)}
+  .tp-term button[disabled]{opacity:.35;cursor:default}
+  .tp-term button[aria-selected="true"]{color:var(--text)}
+  .tp-cyan .tp-term button[aria-selected="true"]{background:rgba(37,211,238,.14);border-color:rgba(37,211,238,.5)}
+  .tp-gold .tp-term button[aria-selected="true"]{background:rgba(245,177,61,.14);border-color:rgba(245,177,61,.5)}
+  .tp-term button[aria-selected="true"] .d{color:var(--green)}
+  .tp-price{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+    margin-top:auto;padding-top:14px}
+  .tp-amtwrap{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .tp-amtline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .tp-amt{font-size:27px;font-weight:800;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+  .tp-amt .cur{font-size:16px;font-weight:700;color:var(--muted)}
+  .tp-amt.tp-ask{font-size:18px;font-weight:700;color:var(--muted)}
+  .tp-termtxt{font-size:12px;color:var(--dim);font-weight:600}
+  .tp-save{font-size:11px;font-weight:800;color:var(--green);background:rgba(52,211,153,.1);
+    border:1px solid rgba(52,211,153,.34);padding:2px 8px;border-radius:100px;white-space:nowrap}
+  .tp-permo{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:4px}
+  .tp-permo b{color:var(--text)} .tp-pp{color:var(--gold)}
+  .tp-cta{flex:none;min-height:46px;display:inline-flex;align-items:center;justify-content:center;
+    padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:800;color:#03121a;
+    background:linear-gradient(135deg,var(--cyan),var(--cyan-d))}
+  .tp-gold .tp-cta{color:#2a1c02;background:linear-gradient(135deg,var(--gold),#ffcf78)}
+  .tp-cta:hover{filter:brightness(1.07)}
+
   /* faq */
   .faq{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
   details{background:var(--panelc);border:1px solid var(--line);border-radius:13px;padding:2px 20px}
@@ -278,30 +324,74 @@
     <h2>От простого старта до личного сервера</h2>
     <p>Базовый уже в роутере. Захотел скорости — включаешь премиум. Нужен свой сервер на семью или команду — берёшь LUX.</p>
   </div>
-  <div class="twrap"><table>
-    <thead><tr>
-      <th>Тариф</th><th>Что даёт</th><th class="price">3 мес</th><th class="price">6 мес</th><th class="price">12 мес</th>
-    </tr></thead>
-    <tbody>
-      <!-- TARIFFS:START (эти строки перезаписывает панель — не редактировать вручную) -->
-      <tr>
-        <td><span class="tname prem">Premium-3</span></td>
-        <td class="tdesc">3 приватных сервера, пропускная способность 5 Гбит/с</td>
-        <td class="price">3 000 ₽</td><td class="price">5 700 ₽</td><td class="price">10 800 ₽</td>
-      </tr>
-      <tr>
-        <td><span class="tname lux">LUX-1</span></td>
-        <td class="tdesc">Индивидуальный сервер, до 5 абонентов. Своя выделенная линия.</td>
-        <td class="price">11 900 ₽</td><td class="price">22 800 ₽</td><td class="price">43 200 ₽</td>
-      </tr>
-      <tr>
-        <td><span class="tname prem">Майнинг</span></td>
-        <td class="tdesc">Майнинг: приоритет  пулов trustpool/emcd/viabtc, прямой маршрут и минимальный пинг + премиум сервера</td>
-        <td class="price">3 000 ₽</td><td class="price">5 700 ₽</td><td class="price">10 800 ₽</td>
-      </tr>
+  <div class="tp-grid">
+      <!-- TARIFFS:START (эти карточки перезаписывает панель — не редактировать вручную) -->
+      <article class="tp-card tp-cyan" data-p3="3000" data-p6="5700" data-p12="10800">
+        <div class="tp-name">Premium-3</div>
+        <p class="tp-desc">3 приватных сервера, трафик 400Гб/мес, пропускная способность 5 Гбит/с</p>
+        <ul class="tp-specs">
+          <li><span class="k">Приватных серверов</span><span class="v">3</span></li>
+          <li><span class="k">Канал</span><span class="v">5 Гбит/с</span></li>
+          <li><span class="k">Трафик</span><span class="v">400 ГБ/мес</span></li>
+        </ul>
+        <div class="tp-term" role="tablist" aria-label="Срок оплаты">
+          <button type="button" role="tab" data-term="3" aria-selected="false">3 мес<span class="d">базовая</span></button>
+          <button type="button" role="tab" data-term="6" aria-selected="true">6 мес<span class="d">−5%</span></button>
+          <button type="button" role="tab" data-term="12" aria-selected="false">12 мес<span class="d">−10%</span></button>
+        </div>
+        <div class="tp-price">
+          <div class="tp-amtwrap">
+            <div class="tp-amtline"><span class="tp-amt"><span class="pnum"></span> <span class="cur">₽</span></span><span class="tp-termtxt"></span><span class="tp-save" hidden></span></div>
+            <span class="tp-permo">≈ <b class="pm"></b>/мес</span>
+          </div>
+          <a class="tp-cta" href="https://t.me/hirouter_bot">Выбрать</a>
+        </div>
+      </article>
+      <article class="tp-card tp-gold" data-p3="12000" data-p6="22800" data-p12="43200" data-people="5">
+        <div class="tp-name">LUX-1</div>
+        <p class="tp-desc">Индивидуальный сервер, до 5 абонентов. Своя выделенная линия 1 Гб/с</p>
+        <ul class="tp-specs">
+          <li><span class="k">Сервер</span><span class="v">индивидуальный</span></li>
+          <li><span class="k">Абонентов</span><span class="v">до 5</span></li>
+          <li><span class="k">Канал</span><span class="v">1 Гбит/с</span></li>
+          <li><span class="k">Трафик</span><span class="v">безлимит</span></li>
+        </ul>
+        <div class="tp-term" role="tablist" aria-label="Срок оплаты">
+          <button type="button" role="tab" data-term="3" aria-selected="false">3 мес<span class="d">базовая</span></button>
+          <button type="button" role="tab" data-term="6" aria-selected="true">6 мес<span class="d">−5%</span></button>
+          <button type="button" role="tab" data-term="12" aria-selected="false">12 мес<span class="d">−10%</span></button>
+        </div>
+        <div class="tp-price">
+          <div class="tp-amtwrap">
+            <div class="tp-amtline"><span class="tp-amt"><span class="pnum"></span> <span class="cur">₽</span></span><span class="tp-termtxt"></span><span class="tp-save" hidden></span></div>
+            <span class="tp-permo">≈ <b class="pm"></b>/мес<span class="tp-pp-wrap"> · <b class="tp-pp"></b>/чел</span></span>
+          </div>
+          <a class="tp-cta" href="https://t.me/hirouter_bot">Выбрать</a>
+        </div>
+      </article>
+      <article class="tp-card tp-cyan" data-p3="3000" data-p6="5700" data-p12="10800">
+        <div class="tp-name">Майнинг</div>
+        <p class="tp-desc">Майнинг: приоритет  пулов trustpool/emcd/viabtc, прямой маршрут и минимальный пинг + премиум сервера. Не подходит для просмотров YouTube и соц сетей, предназначен сугубо для майнинга</p>
+        <ul class="tp-specs">
+          <li><span class="k">Пулы в приоритете</span><span class="v">trustpool · emcd · viabtc</span></li>
+          <li><span class="k">Маршруты до пула</span><span class="v">прямой, минимальный пинг</span></li>
+          <li><span class="k">Трафик</span><span class="v">600 ГБ/мес</span></li>
+        </ul>
+        <div class="tp-term" role="tablist" aria-label="Срок оплаты">
+          <button type="button" role="tab" data-term="3" aria-selected="false">3 мес<span class="d">базовая</span></button>
+          <button type="button" role="tab" data-term="6" aria-selected="true">6 мес<span class="d">−5%</span></button>
+          <button type="button" role="tab" data-term="12" aria-selected="false">12 мес<span class="d">−10%</span></button>
+        </div>
+        <div class="tp-price">
+          <div class="tp-amtwrap">
+            <div class="tp-amtline"><span class="tp-amt"><span class="pnum"></span> <span class="cur">₽</span></span><span class="tp-termtxt"></span><span class="tp-save" hidden></span></div>
+            <span class="tp-permo">≈ <b class="pm"></b>/мес</span>
+          </div>
+          <a class="tp-cta" href="https://t.me/hirouter_bot">Выбрать</a>
+        </div>
+      </article>
       <!-- TARIFFS:END -->
-    </tbody>
-  </table></div>
+  </div>
   <p class="tnote">6 месяцев — −5%, год — −10%. LUX выгоден в складчину: чем больше абонентов на выделенном сервере — тем дешевле на человека. Цены ориентировочные.</p>
   <div class="cta" style="margin-top:34px">
     <a class="btn btn-primary" href="https://t.me/hirouter_bot">Выбрать тариф в боте →</a>
@@ -333,6 +423,36 @@
 </div></footer>
 
 <script>
+/* Тарифы: у каждой карточки свой срок 3/6/12 мес — цена и «≈ ₽/мес» считаются на месте. */
+(function(){
+  var TXT={3:'за 3 мес',6:'за 6 мес',12:'за 12 мес'};
+  function f(n){return Math.round(n).toLocaleString('ru-RU')}
+  function draw(c){
+    var t=+c.dataset.term, p3=+c.dataset.p3||0, pr=+c.dataset['p'+t]||0, pe=+c.dataset.people||0;
+    var num=c.querySelector('.pnum'); if(!num)return;
+    num.textContent=f(pr);
+    var tt=c.querySelector('.tp-termtxt'); if(tt)tt.textContent=TXT[t]||'';
+    var pm=c.querySelector('.pm'); if(pm)pm.textContent=f(pr/t)+' \u20bd';
+    var pp=c.querySelector('.tp-pp'); if(pp&&pe)pp.textContent=f(pr/t/pe)+' \u20bd';
+    var sv=c.querySelector('.tp-save');
+    if(sv){var d=p3*(t/3)-pr; if(p3&&d>0){sv.textContent='\u2212'+f(d)+' \u20bd';sv.hidden=false}else sv.hidden=true}
+  }
+  document.querySelectorAll('.tp-card').forEach(function(c){
+    var sw=c.querySelector('.tp-term'); if(!sw)return;
+    var btns=[].slice.call(sw.querySelectorAll('button[data-term]')), first=null;
+    btns.forEach(function(b){ if(!+c.dataset['p'+b.dataset.term]){b.disabled=true;b.setAttribute('aria-selected','false')} else if(!first||b.dataset.term==='6')first=b; });
+    if(!first){sw.hidden=true;return}
+    btns.forEach(function(b){b.setAttribute('aria-selected', b===first?'true':'false')});
+    c.dataset.term=first.dataset.term;
+    sw.addEventListener('click',function(e){
+      var b=e.target.closest('button[data-term]'); if(!b||b.disabled)return;
+      c.dataset.term=b.dataset.term;
+      btns.forEach(function(x){x.setAttribute('aria-selected', x===b?'true':'false')});
+      draw(c);
+    });
+    draw(c);
+  });
+})();
 (function(){var r=document.documentElement,K="hr-theme",v=null;
 try{v=localStorage.getItem(K)}catch(e){}
 if(v==="light"||v==="dark")r.setAttribute("data-theme",v);
