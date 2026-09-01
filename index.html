@@ -152,13 +152,38 @@
   .tnote{color:var(--dim);font-size:12.5px;text-align:center;margin-top:16px}
 
   /* карточки тарифов — содержимое строк задаёт панель (Тарифы → «Опубликовать на сайте») */
-  .tp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));gap:16px;align-items:stretch}
-  .tp-card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:18px;
-    background:linear-gradient(180deg,var(--panelc),var(--ink2));padding:20px 20px 18px}
-  .tp-cyan{border-color:rgba(37,211,238,.28)}
-  .tp-gold{border-color:rgba(245,177,61,.30)}
-  .tp-name{font-size:19px;font-weight:800;letter-spacing:-.01em}
-  .tp-cyan .tp-name{color:var(--acc-text)} .tp-gold .tp-name{color:var(--gold)}
+
+  /* Палитра: цвет карточки задаётся её местом в списке (класс tp-c1…tp-c6, ставит панель),
+     поэтому два соседних тарифа никогда не одного цвета. Всё внутри карточки берёт цвет
+     из переменной --tp — добавить оттенок значит дописать сюда одну строку. */
+  .tp-c1{--tp:#25d3ee;--tp-d:#0b7c93;--tp-ink:#03121a}
+  .tp-c2{--tp:#f5b13d;--tp-d:#c2801a;--tp-ink:#2a1c02}
+  .tp-c3{--tp:#34d399;--tp-d:#0e9a6b;--tp-ink:#04231a}
+  .tp-c4{--tp:#8b7cff;--tp-d:#5d4bd6;--tp-ink:#0d0730}
+  .tp-c5{--tp:#fb7185;--tp-d:#c94358;--tp-ink:#2b060d}
+  .tp-c6{--tp:#60a5fa;--tp-d:#2b6fd0;--tp-ink:#02142e}
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]) .tp-c1{--tp:#0a97b4;--tp-d:#07778e;--tp-ink:#fff}
+    :root:not([data-theme="dark"]) .tp-c2{--tp:#b7791a;--tp-d:#8f5d10;--tp-ink:#fff}
+    :root:not([data-theme="dark"]) .tp-c3{--tp:#0e9a56;--tp-d:#0a7742;--tp-ink:#fff}
+    :root:not([data-theme="dark"]) .tp-c4{--tp:#6d5ce0;--tp-d:#5344c0;--tp-ink:#fff}
+    :root:not([data-theme="dark"]) .tp-c5{--tp:#d33f57;--tp-d:#ab2f44;--tp-ink:#fff}
+    :root:not([data-theme="dark"]) .tp-c6{--tp:#2563eb;--tp-d:#1a4cbb;--tp-ink:#fff}
+  }
+  :root[data-theme="light"] .tp-c1{--tp:#0a97b4;--tp-d:#07778e;--tp-ink:#fff}
+  :root[data-theme="light"] .tp-c2{--tp:#b7791a;--tp-d:#8f5d10;--tp-ink:#fff}
+  :root[data-theme="light"] .tp-c3{--tp:#0e9a56;--tp-d:#0a7742;--tp-ink:#fff}
+  :root[data-theme="light"] .tp-c4{--tp:#6d5ce0;--tp-d:#5344c0;--tp-ink:#fff}
+  :root[data-theme="light"] .tp-c5{--tp:#d33f57;--tp-d:#ab2f44;--tp-ink:#fff}
+  :root[data-theme="light"] .tp-c6{--tp:#2563eb;--tp-d:#1a4cbb;--tp-ink:#fff}
+
+  .tp-grid{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:stretch}
+  .tp-card{display:flex;flex-direction:column;border-radius:18px;padding:20px 20px 18px;
+    --tp:var(--cyan);--tp-d:var(--cyan-d);--tp-ink:#03121a;
+    background:linear-gradient(180deg,var(--panelc),var(--ink2));
+    border:1px solid var(--line);
+    border-color:color-mix(in srgb, var(--tp) 32%, transparent)}
+  .tp-name{font-size:19px;font-weight:800;letter-spacing:-.01em;color:var(--tp)}
   .tp-desc{color:var(--muted);font-size:13.5px;margin-top:7px;line-height:1.5}
   .tp-specs{list-style:none;margin:14px 0 0;padding:0}
   .tp-specs li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
@@ -175,9 +200,9 @@
     transition:background .15s,border-color .15s,color .15s}
   .tp-term button .d{font-size:10px;font-weight:800;color:var(--dim)}
   .tp-term button[disabled]{opacity:.35;cursor:default}
-  .tp-term button[aria-selected="true"]{color:var(--text)}
-  .tp-cyan .tp-term button[aria-selected="true"]{background:rgba(37,211,238,.14);border-color:rgba(37,211,238,.5)}
-  .tp-gold .tp-term button[aria-selected="true"]{background:rgba(245,177,61,.14);border-color:rgba(245,177,61,.5)}
+  .tp-term button[aria-selected="true"]{color:var(--text);
+    background:color-mix(in srgb, var(--tp) 15%, transparent);
+    border-color:color-mix(in srgb, var(--tp) 52%, transparent)}
   .tp-term button[aria-selected="true"] .d{color:var(--green)}
   .tp-price{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
     margin-top:auto;padding-top:14px}
@@ -190,12 +215,24 @@
   .tp-save{font-size:11px;font-weight:800;color:var(--green);background:rgba(52,211,153,.1);
     border:1px solid rgba(52,211,153,.34);padding:2px 8px;border-radius:100px;white-space:nowrap}
   .tp-permo{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:4px}
-  .tp-permo b{color:var(--text)} .tp-pp{color:var(--gold)}
+  .tp-permo b{color:var(--text)} .tp-pp{color:var(--tp)}
   .tp-cta{flex:none;min-height:46px;display:inline-flex;align-items:center;justify-content:center;
-    padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:800;color:#03121a;
-    background:linear-gradient(135deg,var(--cyan),var(--cyan-d))}
-  .tp-gold .tp-cta{color:#2a1c02;background:linear-gradient(135deg,var(--gold),#ffcf78)}
+    padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:800;
+    color:var(--tp-ink);background:linear-gradient(135deg,var(--tp),var(--tp-d))}
   .tp-cta:hover{filter:brightness(1.07)}
+
+  /* Ширина карточки зависит от ЧИСЛА тарифов (data-n проставляет скрипт внизу страницы):
+     в ряду не должно оставаться одинокой карточки. 4 → 2×2, 5 → 3+2 по центру, 6 → 3+3. */
+  .tp-card{flex:1 1 100%;max-width:100%}
+  @media (min-width:640px){
+    .tp-card{flex:1 1 calc(50% - 8px);max-width:calc(50% - 8px)}
+  }
+  @media (min-width:980px){
+    .tp-card{flex:1 1 calc(33.333% - 11px);max-width:calc(33.333% - 11px)}
+    .tp-grid[data-n="1"] .tp-card{flex-basis:400px;max-width:400px}
+    .tp-grid[data-n="2"] .tp-card,
+    .tp-grid[data-n="4"] .tp-card{flex-basis:calc(50% - 8px);max-width:calc(50% - 8px)}
+  }
 
   /* faq */
   .faq{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
@@ -439,10 +476,12 @@
     var sv=c.querySelector('.tp-save');
     if(sv){var d=p3*(t/3)-pr; if(p3&&d>0){sv.textContent='\u2212'+f(d)+' \u20bd';sv.hidden=false}else sv.hidden=true}
   }
+  // ширина карточек зависит от их числа — раскладку выбирает CSS по data-n
+  document.querySelectorAll('.tp-grid').forEach(function(g){g.dataset.n=g.querySelectorAll('.tp-card').length});
   document.querySelectorAll('.tp-card').forEach(function(c){
     var sw=c.querySelector('.tp-term'); if(!sw)return;
     var btns=[].slice.call(sw.querySelectorAll('button[data-term]')), first=null;
-    btns.forEach(function(b){ if(!+c.dataset['p'+b.dataset.term]){b.disabled=true;b.setAttribute('aria-selected','false')} else if(!first||b.dataset.term==='6')first=b; });
+    btns.forEach(function(b){ if(!+c.dataset['p'+b.dataset.term]){b.disabled=true;b.setAttribute('aria-selected','false')} else if(!first||b.dataset.term==='3')first=b; });
     if(!first){sw.hidden=true;return}
     btns.forEach(function(b){b.setAttribute('aria-selected', b===first?'true':'false')});
     c.dataset.term=first.dataset.term;
