@@ -177,9 +177,9 @@
   :root[data-theme="light"] .tp-c5{--tp:#d33f57;--tp-d:#ab2f44;--tp-ink:#fff}
   :root[data-theme="light"] .tp-c6{--tp:#2563eb;--tp-d:#1a4cbb;--tp-ink:#fff}
 
-  .tp-grid{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:stretch}
+  .tp-grid{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:stretch;
+    --tp:var(--cyan);--tp-d:var(--cyan-d);--tp-ink:#03121a}
   .tp-card{display:flex;flex-direction:column;border-radius:18px;padding:20px 20px 18px;
-    --tp:var(--cyan);--tp-d:var(--cyan-d);--tp-ink:#03121a;
     background:linear-gradient(180deg,var(--panelc),var(--ink2));
     border:1px solid var(--line);
     border-color:color-mix(in srgb, var(--tp) 32%, transparent)}
@@ -204,8 +204,9 @@
     background:color-mix(in srgb, var(--tp) 15%, transparent);
     border-color:color-mix(in srgb, var(--tp) 52%, transparent)}
   .tp-term button[aria-selected="true"] .d{color:var(--green)}
-  .tp-price{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
-    margin-top:auto;padding-top:14px}
+  .tp-price{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
+    flex-wrap:wrap;margin-top:auto;padding-top:14px}
+  .tp-pp-wrap{white-space:nowrap}
   .tp-amtwrap{display:flex;flex-direction:column;gap:2px;min-width:0}
   .tp-amtline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
   .tp-amt{font-size:27px;font-weight:800;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
@@ -216,7 +217,7 @@
     border:1px solid rgba(52,211,153,.34);padding:2px 8px;border-radius:100px;white-space:nowrap}
   .tp-permo{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:4px}
   .tp-permo b{color:var(--text)} .tp-pp{color:var(--tp)}
-  .tp-cta{flex:none;min-height:46px;display:inline-flex;align-items:center;justify-content:center;
+  .tp-cta{flex:0 0 auto;margin-left:auto;min-height:46px;display:inline-flex;align-items:center;justify-content:center;
     padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:800;
     color:var(--tp-ink);background:linear-gradient(135deg,var(--tp),var(--tp-d))}
   .tp-cta:hover{filter:brightness(1.07)}
